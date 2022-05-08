@@ -1,11 +1,11 @@
-import { OAuthResponse } from "./types";
+import { OAuthResponse, UserInformationResponse } from "../types";
 import { URLSearchParams } from 'url';
 import axios from 'axios';
-import { logger } from "../util/logger";
+import { logger } from "../../util/logger";
 
 const httpClient = axios.create();
 
-export const fetchUserInfo = async (token: string): Promise<any> => {
+export const fetchUserInfo = async (token: string): Promise<UserInformationResponse> => {
     try {
         const infoResponse = await httpClient.get('https://discordapp.com/api/users/@me', {
             headers: {
@@ -13,7 +13,7 @@ export const fetchUserInfo = async (token: string): Promise<any> => {
             }
         });
 
-        return await infoResponse.data;
+        return await infoResponse.data as UserInformationResponse;
     } catch (err) {
         logger.error(err);
         throw new Error('Failed to fetch discord user information!');

@@ -1,3 +1,5 @@
+import { User } from "../persistance/types";
+
 export interface OAuthResponse {
     access_token: string;
     expires_in: number;
@@ -6,9 +8,11 @@ export interface OAuthResponse {
     token_type: string;
 };
 
-export interface UserInformationResponse {
+export interface JwtPayload {
     id: string;
     username: string;
-    avatar: string;
-    locale: string;
-};
+    seed: string;
+    iat: number;
+}
+
+export interface UserInformationResponse extends User { };
