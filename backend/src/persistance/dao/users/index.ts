@@ -5,15 +5,8 @@ import queries from './queries';
 export class UsersDao extends PgDaoBase implements UsersDaoBase {
 
     async usersExists(id: string): Promise<boolean> {
-        try {
-            const connection = await this.dbClient.getConnection();
-            const { rows } = await connection.query<CountQueryResult>(queries.selectUserById(id));
-            connection.release();
-            return rows[0].count === '1';
-        } catch (err) {
-            logger.error(err);
-            throw new Error('Failed to fetch user!');
-        }
+        const result = await this.runQuery<CountQueryResult>(queries.selectUserById(id), "Failed to fetch user!");
+        return Number(result.count) >= 1;
     }
 
     async saveUser(user: User): Promise<void> {
@@ -23,9 +16,7 @@ export class UsersDao extends PgDaoBase implements UsersDaoBase {
                 return;
             }
 
-            const connection = await this.dbClient.getConnection();
-            await connection.query(queries.saveUser(user));
-            connection.release();
+            await this.runQuery<void>(queries.saveUser(user), "Failed to save user!");
         } catch (err) {
             logger.error(err);
             throw new Error('Failed to save user!');

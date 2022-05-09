@@ -11,6 +11,15 @@ const queries = [
             locale varchar(16) NOT NULL,
             PRIMARY KEY (id)
         )`
+    },
+    {
+        name: "create players table",
+        query: `CREATE TABLE IF NOT EXISTS players (
+            id varchar(36) NOT NULL,
+            name varchar(128) NOT NULL,
+            realm varchar(64) NOT NULL,
+            PRIMARY KEY (id)
+        )`
     }
 ];
 

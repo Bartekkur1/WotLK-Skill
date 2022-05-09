@@ -31,8 +31,9 @@ authHandler.get('/auth', async (req, res, next) => {
     }
 });
 
-authHandler.post('/verify/:token', async (req, res, next) => {
-    const token = req.params.token;
+authHandler.get('/verify', async (req, res, next) => {
+    const tokenRaw = req.headers.authorization || "";
+    const token = tokenRaw.replace(/Bearer\s/, '');
 
     if (!token) {
         return res.sendStatus(400);

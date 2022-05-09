@@ -15,4 +15,6 @@ export interface JwtPayload {
     iat: number;
 }
 
+export class AuthorizationError extends Error { };
+
 export interface UserInformationResponse extends User { };
