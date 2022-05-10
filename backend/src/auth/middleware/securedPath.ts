@@ -11,7 +11,8 @@ export const securedPath = (req: Request, res: Response, next: NextFunction) => 
     const token = tokenRaw.replace(/Bearer\s/, '');
 
     try {
-        verifyToken(token);
+        const payload = verifyToken(token);
+        res.locals.sessionUser = payload;
         next();
     } catch (err) {
         next(new AuthorizationError());

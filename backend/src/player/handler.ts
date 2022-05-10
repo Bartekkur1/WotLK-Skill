@@ -2,13 +2,17 @@ import { Router } from 'express';
 import { v4 } from 'uuid';
 import { securedPath } from '../auth/middleware/securedPath';
 import { playersDao } from '../persistance';
+import { Player } from '../persistance/types';
+import { IdSchema } from '../shared/schema';
+import { validateData } from '../shared/validateData';
 import { logger } from '../util/logger';
+import { PlayerSchema } from './schema';
 
 export const playerHandler = Router();
 
 playerHandler.post('/player', securedPath, async (req, res, next) => {
     try {
-        const { name, realm } = req.body;
+        const { name, realm } = validateData<Player>(PlayerSchema, req.body);
         const playerExists = await playersDao.playerExists(name, realm);
         if (playerExists) {
             logger.debug(`Player already exists!`);
@@ -26,14 +30,15 @@ playerHandler.post('/player', securedPath, async (req, res, next) => {
 });
 
 playerHandler.get('/player/:id', async (req, res, next) => {
-    const id = req.params.id;
-    if (!id) {
-        return res.sendStatus(400);
+    try {
+        const { id } = validateData<{ id: string }>(IdSchema, req.params);
+        const player = await playersDao.findPlayerById(id);
+
+        return res.json({
+            ...player
+        }).status(200);
+    } catch (err) {
+        logger.error(err);
+        next(err);
     }
-
-    const player = await playersDao.findPlayerById(id);
-
-    return res.json({
-        ...player
-    }).status(200);
 });

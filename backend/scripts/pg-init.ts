@@ -20,6 +20,27 @@ const queries = [
             realm varchar(64) NOT NULL,
             PRIMARY KEY (id)
         )`
+    },
+    {
+        name: "create ratings table",
+        query: `CREATE TABLE IF NOT EXISTS ratings (
+            id varchar(36) NOT NULL,
+            player varchar(36) NOT NULL,
+            author varchar(36) NOT NULL,
+            mechanics decimal NOT NULL,
+            performance decimal NOT NULL,
+            communication decimal NOT NULL,
+            comment text NOT NULL,
+            PRIMARY KEY (id)
+        )`
+    },
+    {
+        name: "create ratings relation to player",
+        query: "ALTER TABLE ratings ADD FOREIGN KEY (\"player\") REFERENCES \"players\" (\"id\");"
+    },
+    {
+        name: "create ratings relation to author",
+        query: "ALTER TABLE ratings ADD FOREIGN KEY (\"author\") REFERENCES \"users\" (\"id\");"
     }
 ];
 

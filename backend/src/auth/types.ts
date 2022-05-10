@@ -1,3 +1,4 @@
+import { Request } from "express";
 import { User } from "../persistance/types";
 
 export interface OAuthResponse {
@@ -13,6 +14,10 @@ export interface JwtPayload {
     username: string;
     seed: string;
     iat: number;
+}
+
+export interface SessionUserRequest extends Request {
+    sessionUser?: JwtPayload;
 }
 
 export class AuthorizationError extends Error { };

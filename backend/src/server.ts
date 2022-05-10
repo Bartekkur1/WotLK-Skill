@@ -2,6 +2,8 @@ import bodyParser from 'body-parser';
 import express, { NextFunction, Request, Response } from 'express';
 import { authHandler } from './auth/handler';
 import { playerHandler } from './player/handler';
+import { ratingsHandler } from './ratings/handler';
+import { ValidationErrpr } from './shared/validateData';
 import { logger } from './util/logger';
 
 export class WebServer {
@@ -17,12 +19,17 @@ export class WebServer {
 
         this.app.use(authHandler);
         this.app.use(playerHandler);
+        this.app.use(ratingsHandler);
 
         this.app.use((req, res) => {
             return res.sendStatus(404);
         });
 
         this.app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+            if (err instanceof ValidationErrpr) {
+                return res.status(400).json(err.toJson());
+            }
+
             return res.status(400).json({
                 error: err.message
             });
