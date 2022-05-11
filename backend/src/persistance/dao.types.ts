@@ -1,6 +1,11 @@
 import { PgDatabaseClient } from "../shared/pgClient";
 import { logger } from "../util/logger";
-import { CountQueryResult, Player, Rating, Realm, User } from "./types";
+import { Player, Rating, Realm, User } from "./types";
+
+export interface ResultHandlers<T> {
+    singleResult: () => T;
+    allResults: () => T[];
+}
 
 export abstract class PgDaoBase {
     protected dbClient: PgDatabaseClient;
@@ -9,24 +14,20 @@ export abstract class PgDaoBase {
         this.dbClient = connection;
     }
 
-    protected async executeQuery<T>(query: string, errorMessage: string) {
+    protected async executeQuery<T>(query: string, errorMessage: string): Promise<ResultHandlers<T>> {
         try {
             const connection = await this.dbClient.getConnection();
             const { rows } = await connection.query<T>(query);
             connection.release();
-            return rows[0];
+
+            return {
+                singleResult: () => rows[0] as T,
+                allResults: () => rows as T[]
+            };
         } catch (err) {
             logger.error(err, query);
             throw new Error(errorMessage);
         }
-    }
-
-    protected singleResult<T>(rows: T[]) {
-        return rows[0];
-    }
-
-    protected countResults(rows: CountQueryResult[]) {
-        return rows[0].count;
     }
 }
 
@@ -44,4 +45,7 @@ export interface PlayersDaoBase {
 export interface RatingsDaoBase {
     saveRating(rating: Rating): Promise<void>;
     findPlayerRatings(playerId: string): Promise<Rating[]>;
+    findUserRatings(userId: string): Promise<Rating[]>;
+    removeRating(id: string): Promise<void>;
+    findRating(id: string): Promise<Rating>;
 }

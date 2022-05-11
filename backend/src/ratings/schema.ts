@@ -7,3 +7,10 @@ export const RatingSchema = Joi.object({
     communication: Joi.number().min(0).max(10).required(),
     comment: Joi.string()
 });
+
+export const RatingUpdateSchema = Joi.object({
+    mechanics: Joi.number().min(0).max(10).required(),
+    performance: Joi.number().min(0).max(10).required(),
+    communication: Joi.number().min(0).max(10).required(),
+    comment: Joi.string()
+});

@@ -11,7 +11,7 @@ export class UsersDao extends PgDaoBase implements UsersDaoBase {
 
     async usersExists(id: string): Promise<boolean> {
         const result = await this.executeQuery<CountQueryResult>(queries.selectUserById(id), "Failed to fetch user!");
-        return Number(result.count) >= 1;
+        return Number(result.singleResult().count) >= 1;
     }
 
     async saveUser(user: User): Promise<void> {

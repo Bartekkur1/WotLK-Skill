@@ -12,16 +12,18 @@ export class PlayersDao extends PgDaoBase implements PlayersDaoBase {
 
 
     async findPlayerById(id: string): Promise<Player> {
-        return this.executeQuery<Player>(queries.selectPlayerById(id), "Failed to fetch player!");
+        const result = await this.executeQuery<Player>(queries.selectPlayerById(id), "Failed to fetch player!");
+        return result.singleResult();
     }
 
     async findPlayer(name: string, realm: Realm): Promise<Player> {
-        return this.executeQuery<Player>(queries.selectPlayerByNameAndRealm(name, realm), "Failed to fetch player!");
+        const result = await this.executeQuery<Player>(queries.selectPlayerByNameAndRealm(name, realm), "Failed to fetch player!");
+        return result.singleResult();
     }
 
     async playerExists(name: string, realm: Realm): Promise<boolean> {
         const result = await this.executeQuery<CountQueryResult>(queries.countPlayerByNameAndRealm(name, realm), "Failed to fetch player!");
-        return Number(result.count) >= 1;
+        return Number(result.singleResult().count) >= 1;
     }
 
     async savePlayer(player: Player): Promise<void> {
