@@ -5,7 +5,8 @@ const queries = {
     savePlayer: ({ id, name, realm }: Player) => `INSERT INTO players (id, name, realm) VALUES ('${id}', '${name}', '${realm}');`,
     countPlayerByNameAndRealm: (name: string, realm: string) => `SELECT COUNT(*) FROM players WHERE name = '${name}' AND realm = '${realm}';`,
     selectPlayerByNameAndRealm: (name: string, realm: string) => `SELECT * FROM players WHERE name = '${name}' AND realm = '${realm}';`,
-    selectPlayerById: (id: string) => `SELECT * FROM players WHERE id = '${id}';`
+    selectPlayerById: (id: string) => `SELECT * FROM players WHERE id = '${id}';`,
+    searchPlayersByName: (name: string) => `SELECT * FROM players WHERE LOWER(name) LIKE '%${name}%' LIMIT 10;`
 };
 
 export class PlayersDao extends PgDaoBase implements PlayersDaoBase {
@@ -28,6 +29,11 @@ export class PlayersDao extends PgDaoBase implements PlayersDaoBase {
 
     async savePlayer(player: Player): Promise<void> {
         await this.executeQuery<void>(queries.savePlayer(player), "Failed to save player!");
+    }
+
+    async searchPlayerName(name: string): Promise<Player[]> {
+        const result = await this.executeQuery<Player>(queries.searchPlayersByName(name.toLowerCase()), "Failed search players!");
+        return result.allResults();
     }
 
 }

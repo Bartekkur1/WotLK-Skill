@@ -6,7 +6,7 @@ import { Player } from '../persistance/types';
 import { IdSchema } from '../shared/schema';
 import { validateData } from '../shared/validateData';
 import { logger } from '../util/logger';
-import { PlayerSchema } from './schema';
+import { NameSearchSchema, PlayerSchema } from './schema';
 
 export const playerHandler = Router();
 
@@ -37,6 +37,19 @@ playerHandler.get('/player/:id', async (req, res, next) => {
         return res.json({
             ...player
         }).status(200);
+    } catch (err) {
+        logger.error(err);
+        next(err);
+    }
+});
+
+playerHandler.get('/player', async (req, res, next) => {
+    try {
+        const { name } = validateData<{ name: string }>(NameSearchSchema, req.query);
+
+        const players = await playersDao.searchPlayerName(name);
+
+        return res.json(players).status(200);
     } catch (err) {
         logger.error(err);
         next(err);

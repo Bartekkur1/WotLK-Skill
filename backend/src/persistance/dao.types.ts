@@ -40,6 +40,7 @@ export interface PlayersDaoBase {
     playerExists(name: string, realm: Realm): Promise<boolean>;
     findPlayer(name: string, realm: Realm): Promise<Player>;
     savePlayer(player: Player): Promise<void>;
+    searchPlayerName(name: string): Promise<Player[]>;
 }
 
 export interface RatingsDaoBase {
