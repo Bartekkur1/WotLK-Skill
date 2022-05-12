@@ -1,12 +1,11 @@
-import React from 'react';
+import { FC } from 'react';
 import './App.css';
+import { Search } from './components/search/Search';
 
-function App() {
+export const App: FC = () => {
   return (
-    <div className="App">
-      Hello world!
+    <div>
+      <Search />
     </div>
-  );
+  )
 }
-
-export default App;

@@ -4,6 +4,7 @@ import { authHandler } from './auth/handler';
 import { playerHandler } from './player/handler';
 import { ratingsHandler } from './ratings/handler';
 import { ValidationErrpr } from './shared/validateData';
+import cors from 'cors';
 import { logger } from './util/logger';
 
 export class WebServer {
@@ -15,6 +16,7 @@ export class WebServer {
     }
 
     private initRoutes() {
+        this.app.use(cors());
         this.app.use(bodyParser.json());
 
         this.app.use(authHandler);
