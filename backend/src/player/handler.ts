@@ -21,6 +21,7 @@ playerHandler.post('/player', securedPath, async (req, res, next) => {
         }
 
         const id = v4();
+        logger.debug(`Saving player ${name} on realm ${realm}`);
         await playersDao.savePlayer({ id, name, realm });
         return res.json({ id }).status(200);
     } catch (err) {
@@ -33,6 +34,8 @@ playerHandler.get('/player/:id', async (req, res, next) => {
     try {
         const { id } = validateData<{ id: string }>(IdSchema, req.params);
         const player = await playersDao.findPlayerById(id);
+
+        logger.info(`Fetching player profile ${JSON.stringify(id)}`);
 
         return res.json({
             ...player
@@ -47,6 +50,7 @@ playerHandler.get('/player', async (req, res, next) => {
     try {
         const { name } = validateData<{ name: string }>(NameSearchSchema, req.query);
 
+        logger.info(`Searching player ${name}`);
         const players = await playersDao.searchPlayerName(name);
 
         return res.json(players).status(200);

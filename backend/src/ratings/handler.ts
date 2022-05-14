@@ -26,6 +26,7 @@ ratingsHandler.post('/rating', securedPath, async (req, res, next) => {
         }
 
         await ratingsDao.saveRating({ ...rating, id, author: sessionUser.id });
+        logger.info(`Creating new rating ${id} by user ${sessionUser.id}`);
         return res.json({
             id
         }).status(200);
@@ -40,6 +41,8 @@ ratingsHandler.get('/rating/player/:id', async (req, res, next) => {
         const { id } = validateData<{ id: string }>(IdSchema, req.params);
         const player = await playersDao.findPlayerById(id);
         const ratings = await ratingsDao.findPlayerRatings(id);
+
+        logger.info(`Fetching user ${id} rating`);
 
         return res.json({
             player,
@@ -61,6 +64,7 @@ ratingsHandler.delete('/rating/:id', securedPath, async (req, res, next) => {
 
         if (canDeleteRating) {
             await ratingsDao.removeRating(id);
+            logger.info(`Removing rating ${id} by user ${sessionUser.id}`);
             return res.sendStatus(200);
         } else {
             return res.sendStatus(400);
@@ -82,6 +86,8 @@ ratingsHandler.patch('/rating/:id', securedPath, async (req, res, next) => {
 
         const { mechanics, performance, communication, comment } = validateData<Rating>(RatingUpdateSchema, req.body);
         const { player, author } = rating;
+
+        logger.info(`Updating rating ${id} by user ${author}`);
 
         await ratingsDao.removeRating(id);
         await ratingsDao.saveRating({

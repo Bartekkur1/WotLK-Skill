@@ -15,6 +15,7 @@ export abstract class PgDaoBase {
     }
 
     protected async executeQuery<T>(query: string, errorMessage: string): Promise<ResultHandlers<T>> {
+        logger.debug(`Executing query ${query}`);
         try {
             const connection = await this.dbClient.getConnection();
             const { rows } = await connection.query<T>(query);
