@@ -1,13 +1,16 @@
 import { FC, useState } from 'react';
 import { httpClient } from '../../httpClient';
 import config from '../../config.json';
+import './search.css';
 
 import { Player } from '../../types';
+import { Hint } from '../hint/Hint';
 
 export const Search: FC = () => {
 
     const [timeoutId, setTimeoutId] = useState<number | undefined>(undefined);
     const [players, setPlayers] = useState<Player[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleInput = (name: string) => {
 
@@ -17,12 +20,15 @@ export const Search: FC = () => {
             }
 
             try {
+                setLoading(true);
                 const { appUrl, routes } = config;
                 const url = appUrl + routes.searchPlayers + name;
                 const res = await httpClient.get(url);
                 setPlayers(res.data as Player[]);
             } catch (err) {
                 console.log(err);
+            } finally {
+                setLoading(false);
             }
         }, 500);
 
@@ -32,20 +38,21 @@ export const Search: FC = () => {
         setTimeoutId(timeout as unknown as number);
     };
 
+    const renderResults = () => {
+        if (loading) {
+            return <p className='loading'>Loading...</p>
+        }
+        return players.map(player => <Hint key={player.id} player={player} />);
+    }
+
     return (
-        <div>
-            <input onChange={e => {
+        <div className='search-container'>
+            <h1 className='search-header'>WotLK-Skill</h1>
+            <input className='search-input' onChange={e => {
                 handleInput(e.currentTarget.value);
-                // setName(e.currentTarget.value);
-            }} type={"text"} placeholder={"Player name"} list={"suggestions"} />
+            }} type={"text"} placeholder={"Player name"} />
             <div>
-                {players.map(({ id, name, realm }) => {
-                    return (
-                        <div key={id}>
-                            <p>{name} - {realm}</p>
-                        </div>
-                    )
-                })}
+                {renderResults()}
             </div>
         </div>
     )

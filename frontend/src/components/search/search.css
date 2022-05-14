@@ -1,0 +1,16 @@
+.search-input {
+    font-size: 24px;
+}
+
+.search-header {
+    text-align: center;
+}
+
+.search-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.loading {
+    padding-left: 1rem;
+}

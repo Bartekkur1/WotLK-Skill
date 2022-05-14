@@ -1,0 +1,10 @@
+#root {
+    height: 100vh;
+}
+
+.app-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20vh;
+    height: 100vh;
+}
